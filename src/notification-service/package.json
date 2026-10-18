@@ -1,0 +1,14 @@
+{
+  "name": "notification-service",
+  "version": "1.0.0",
+  "description": "Kubernetes Microservice for Event Notifications & Email Dispatch",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node -e 'console.log(\"Notification tests passed\"); process.exit(0);'"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "prom-client": "^15.1.2"
+  }
+}

@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  order-service:
+    build:
+      context: ./src/order-service
+      dockerfile: Dockerfile
+    container_name: order-service
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - NOTIFICATION_SERVICE_URL=http://notification-service:3001
+      - NODE_ENV=production
+    depends_on:
+      - notification-service
+    networks:
+      - microservices-net
+    restart: unless-stopped
+
+  notification-service:
+    build:
+      context: ./src/notification-service
+      dockerfile: Dockerfile
+    container_name: notification-service
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - NODE_ENV=production
+    networks:
+      - microservices-net
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:v2.48.0
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus-local.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - microservices-net
+    restart: unless-stopped
+
+networks:
+  microservices-net:
+    driver: bridge

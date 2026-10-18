@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: order-service-config
+  namespace: microservices-prod
+data:
+  PORT: "3000"
+  NODE_ENV: "production"
+  NOTIFICATION_SERVICE_URL: "http://notification-service.microservices-prod.svc.cluster.local:3001"
+  LOG_LEVEL: "info"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: order-service-secret
+  namespace: microservices-prod
+type: Opaque
+stringData:
+  DB_PASSWORD: "SuperSecureK8sPassword2026!"
+  API_KEY: "prod-live-api-key-998822"

@@ -1,0 +1,50 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: microservices-alerts
+  namespace: microservices-prod
+  labels:
+    role: alert-rules
+    prometheus: k8s
+spec:
+  groups:
+    - name: MicroservicesAlerts
+      rules:
+        - alert: HighHttpErrorRate
+          expr: (sum(rate(http_requests_total{status_code=~"5.."}[2m])) / sum(rate(http_requests_total[2m]))) * 100 > 5
+          for: 1m
+          labels:
+            severity: critical
+            team: devops
+          annotations:
+            summary: "High HTTP 5xx error rate detected on {{ $labels.instance }}"
+            description: "HTTP 5xx error rate is currently at {{ $value | printf \"%.2f\" }}% over the last 2 minutes."
+
+        - alert: PodCrashLooping
+          expr: rate(kube_pod_container_status_restarts_total{namespace="microservices-prod"}[5m]) * 60 > 2
+          for: 2m
+          labels:
+            severity: warning
+            team: devops
+          annotations:
+            summary: "Pod {{ $labels.pod }} is crashlooping"
+            description: "Container {{ $labels.container }} restarted more than 2 times in 5 minutes."
+
+        - alert: HPAReachedMaxReplicas
+          expr: kube_horizontalpodautoscaler_status_current_replicas{namespace="microservices-prod"} == kube_horizontalpodautoscaler_spec_max_replicas{namespace="microservices-prod"}
+          for: 5m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "HPA {{ $labels.horizontalpodautoscaler }} reached maximum replicas"
+            description: "The autoscaler has been at maximum capacity (8 pods) for >5 minutes under heavy load."
+
+        - alert: HighMemorySaturation
+          expr: (container_memory_working_set_bytes{namespace="microservices-prod"} / container_spec_memory_limit_bytes{namespace="microservices-prod"}) * 100 > 85
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Container {{ $labels.container }} is near memory limit"
+            description: "Memory usage is above 85% of limit. OOMKill is imminent."

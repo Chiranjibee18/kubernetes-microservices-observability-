@@ -1,0 +1,54 @@
+global:
+  environment: production
+  namespace: microservices-prod
+
+orderService:
+  enabled: true
+  replicaCount: 2
+  image:
+    repository: chiranjibee18/order-service
+    tag: "1.0.0"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 3000
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 300m
+      memory: 256Mi
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 8
+    targetCPUUtilizationPercentage: 60
+    targetMemoryUtilizationPercentage: 70
+
+notificationService:
+  enabled: true
+  replicaCount: 2
+  image:
+    repository: chiranjibee18/notification-service
+    tag: "1.0.0"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 3001
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+
+ingress:
+  enabled: true
+  className: "nginx"
+  host: api.clouddevops.chiranjibee.com
+  tls:
+    enabled: true
+    secretName: microservices-tls-secret

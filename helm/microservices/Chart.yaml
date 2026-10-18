@@ -1,0 +1,14 @@
+apiVersion: v2
+name: microservices-platform
+description: Production-Ready Microservices Helm Chart with HPA & Observability
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - kubernetes
+  - microservices
+  - prometheus
+  - hpa
+maintainers:
+  - name: Chiranjibee Panigrahi
+    email: chiranjibeepanigrahi@gmail.com
