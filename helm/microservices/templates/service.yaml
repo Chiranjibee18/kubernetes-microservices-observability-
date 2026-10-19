@@ -1,0 +1,19 @@
+{{- if .Values.orderService.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-service
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: order-service
+    {{- include "microservices.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.orderService.service.type }}
+  ports:
+    - port: {{ .Values.orderService.service.port }}
+      targetPort: {{ .Values.orderService.service.targetPort }}
+      protocol: TCP
+      name: http
+  selector:
+    app: order-service
+{{- end }}

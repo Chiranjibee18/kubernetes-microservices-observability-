@@ -1,0 +1,29 @@
+{{- if .Values.orderService.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-service
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: order-service
+    {{- include "microservices.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.orderService.replicaCount }}
+  selector:
+    matchLabels:
+      app: order-service
+  template:
+    metadata:
+      labels:
+        app: order-service
+    spec:
+      containers:
+        - name: order-service
+          image: "{{ .Values.orderService.image.repository }}:{{ .Values.orderService.image.tag }}"
+          imagePullPolicy: {{ .Values.orderService.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.orderService.service.targetPort }}
+              name: http
+          resources:
+            {{- toYaml .Values.orderService.resources | nindent 12 }}
+{{- end }}
