@@ -1,0 +1,31 @@
+# Node dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+secrets/
+*.pem
+*.key
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Coverage & test output
+coverage/
+.nyc_output/
+
+# Temporary / build files
+dist/
+build/
+*.tmp

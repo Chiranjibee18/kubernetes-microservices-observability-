@@ -41,9 +41,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Build Order Service Docker Image
+      - name: Build Microservices Docker Images
         run: |
           docker build -t order-service:local ./src/order-service
+          docker build -t notification-service:local ./src/notification-service
 
       - name: Run Trivy Security Scanner (Containerized)
         run: |
@@ -53,6 +54,13 @@ jobs:
             --exit-code 0 \
             --severity HIGH,CRITICAL \
             order-service:local
+
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+            aquasec/trivy:latest image \
+            --format table \
+            --exit-code 0 \
+            --severity HIGH,CRITICAL \
+            notification-service:local
 
   validate-k8s:
     name: Validate Kubernetes Manifests & Helm
