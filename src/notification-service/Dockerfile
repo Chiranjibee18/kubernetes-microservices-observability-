@@ -1,7 +1,7 @@
 FROM node:18-alpine AS dependencies
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm ci --omit=dev || npm install --omit=dev
 
 FROM node:18-alpine AS runner
 WORKDIR /app
